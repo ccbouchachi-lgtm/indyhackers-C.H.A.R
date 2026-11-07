@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>GroupLock</title><link rel="stylesheet" href="popup.css"></head>
+<body><header><div class="mark">G</div><div><h1>GroupLock</h1><p>Make room for focus.</p></div><span class="tag">FOCUS</span></header>
+<main><section class="status"><span id="indicator"></span><div><h2 id="status">Loading…</h2><p id="summary">Checking your restrictions</p></div></section>
+<p class="label">YOUR FOCUS LIST</p><p class="hint">Select the websites you authorize GroupLock to block, including their subdomains.</p>
+<form id="form"><fieldset id="sites" disabled><legend class="sr-only">Websites to block</legend></fieldset><button id="block" type="submit" disabled>Block selected websites</button></form>
+<button id="unblock" class="secondary" disabled>Unblock all · override</button>
+<label class="notification"><input type="checkbox" id="notifications" disabled> Notify me when blocking starts or ends</label>
+<p id="feedback" role="status" aria-live="polite"></p>
+<section class="connection"><strong>Backend connection</strong><p id="connection">Checking connection…</p><p id="sync-status"></p>
+<label>Backend URL<input id="origin" type="url" placeholder="https://your-grouplock.example" autocomplete="off"></label>
+<label>Pairing credential<input id="credential" type="password" placeholder="Paste your one-time displayed credential" autocomplete="off"></label>
+<p>Sign in to GroupLock and create an extension connection. Select the sites you consent to restrict, then pair. Polls every 30 seconds.</p>
+<button id="pair" class="secondary">Pair account</button><button id="sync" class="secondary">Sync now</button><button id="disconnect" class="secondary">Disconnect and clear blocks</button>
+<p>Unblock pauses automatic blocking until you click Resume. Disconnect removes this device’s stored credential; revoke the connection in your account to invalidate it on the server.</p></section>
+<footer>Works while the dashboard is closed.<br>Unblock at any time from this popup.</footer></main><script type="module" src="popup.js"></script></body></html>
