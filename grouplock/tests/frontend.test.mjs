@@ -120,3 +120,29 @@ test('real auth and pairing adapter sends cookie-backed requests and preserves A
     await assert.rejects(webApi.me(), err => err.code === 'INVALID_RESPONSE');
   } finally { global.fetch = originalFetch; }
 });
+
+test('live task requests carry explicit focus consent and the observed submission version', async () => {
+  const { liveApi } = loadModule(path.join(temp, 'web-api.js'));
+  const originalFetch = global.fetch;
+  const requests = [];
+  global.fetch = async (url, init) => {
+    requests.push([url, init.method, JSON.parse(init.body)]);
+    return Response.json({ data: {} });
+  };
+  try {
+    const task = { id: 'task-id', submissionVersion: 2 };
+    const focusAgreement = { allowedDomains: [], expiresAt: '2026-11-08T18:00:00.000Z' };
+    await liveApi.accept(task.id);
+    await liveApi.accept(task.id, focusAgreement);
+    await liveApi.submit(task, 'https://example.com/work');
+    await liveApi.review(task, 'approve');
+    assert.deepEqual(requests, [
+      ['/api/tasks/task-id/accept', 'POST', {}],
+      ['/api/tasks/task-id/accept', 'POST', { focusAgreement }],
+      ['/api/tasks/task-id/submit', 'POST', { submissionUrl: 'https://example.com/work', expectedSubmissionVersion: 2 }],
+      ['/api/tasks/task-id/review', 'POST', { decision: 'approve', submissionVersion: 2 }],
+    ]);
+  } finally {
+    global.fetch = originalFetch;
+  }
+});

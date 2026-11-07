@@ -41,3 +41,43 @@ export const webApi = {
   logout: () => requestApi<null>("/api/auth/logout", "POST"),
   pair: () => requestApi<{ connection: { id: string; revokedAt: string | null }; credential: string }>("/api/extension/pair", "POST"),
 };
+
+export type LiveRole = "owner" | "admin" | "member";
+export type LiveGroup = { id: string; name: string; role: LiveRole };
+export type LiveGroupDetail = {
+  group: LiveGroup;
+  members: { userId: string; username: string }[];
+  inviteCode: string | null;
+};
+export type LiveTask = {
+  id: string;
+  title: string;
+  description: string;
+  assignedTo: string;
+  reviewerId: string;
+  deadline: string;
+  status: "assigned" | "accepted" | "submitted" | "changes_requested" | "approved";
+  submissionVersion: number;
+  submissionUrl: string | null;
+  isOverdue: boolean;
+};
+type TaskInput = Pick<LiveTask, "title" | "description" | "assignedTo" | "reviewerId" | "deadline">;
+type FocusConsent = { expiresAt: string; allowedDomains: string[] };
+
+export const liveApi = {
+  signup: (username: string, email: string, password: string) =>
+    requestApi<{ requiresEmailConfirmation: boolean }>("/api/auth/signup", "POST", { username, email, password }),
+  groups: () => requestApi<LiveGroup[]>("/api/groups"),
+  group: (id: string) => requestApi<LiveGroupDetail>(`/api/groups/${id}`),
+  createGroup: (name: string) => requestApi<{ group: LiveGroup }>("/api/groups", "POST", { name }),
+  joinGroup: (inviteCode: string) => requestApi<LiveGroup>("/api/groups/join", "POST", { inviteCode }),
+  tasks: (id: string) => requestApi<LiveTask[]>(`/api/groups/${id}/tasks`),
+  assign: (id: string, input: TaskInput) => requestApi<LiveTask>(`/api/groups/${id}/tasks`, "POST", input),
+  accept: (id: string, focusAgreement?: FocusConsent) =>
+    requestApi<{ task: LiveTask }>(`/api/tasks/${id}/accept`, "POST", focusAgreement ? { focusAgreement } : {}),
+  submit: (task: LiveTask, submissionUrl: string) => requestApi<LiveTask>(`/api/tasks/${task.id}/submit`, "POST", {
+    submissionUrl, expectedSubmissionVersion: task.submissionVersion,
+  }),
+  review: (task: LiveTask, decision: "approve" | "request_changes") =>
+    requestApi<LiveTask>(`/api/tasks/${task.id}/review`, "POST", { decision, submissionVersion: task.submissionVersion }),
+};

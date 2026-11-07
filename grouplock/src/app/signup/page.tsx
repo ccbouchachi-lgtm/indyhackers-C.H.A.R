@@ -1,2 +1,5 @@
-import { AuthEntry } from "@/app/components/application/auth-entry";
-export default function SignupPage() { return <AuthEntry signup />; }
+import { RealSignup } from "@/app/components/application/real-signup";
+
+export default function SignupPage() {
+  return <RealSignup />;
+}
