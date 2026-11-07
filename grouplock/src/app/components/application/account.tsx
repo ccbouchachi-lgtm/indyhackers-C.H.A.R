@@ -44,13 +44,13 @@ export function Account() {
   }
 
   return <div className="application">
-    <header className="app-nav"><Link className="app-brand" href="/">▣ GroupLock<span>.</span></Link><nav aria-label="Account navigation"><Link href="/account" aria-current="page">Account & extension</Link><Link href="/dashboard">Demo workspace</Link>{profile ? <button className="button button-white" disabled={busy} onClick={logout}>Sign Out</button> : <Link href="/login">Sign In</Link>}</nav></header>
+    <header className="app-nav"><Link className="app-brand" href="/">▣ GroupLock<span>.</span></Link><nav aria-label="Account navigation"><Link href="/account" aria-current="page">Account & extension</Link><Link href="/work">Groups & tasks</Link>{profile ? <button className="button button-white" disabled={busy} onClick={logout}>Sign Out</button> : <Link href="/login">Sign In</Link>}</nav></header>
     <main className="app-main">
       <div className="app-title"><div><p className="eyebrow text-teal-700">ACCOUNT & EXTENSION</p><h1>Your focus. Your account.</h1></div></div>
       {loading && <p role="status" className="app-help">Checking your signed-in account…</p>}
       {error && <p role="alert" className="app-error mb-6">{error}</p>}
-      {!loading && !profile && <section className="app-card"><h2>Sign in to continue</h2><p className="app-description">This page uses your real backend session, independently of the demo workspace.</p><Link href="/login" className="button button-blue">Go to Sign In →</Link><button className="button button-white ml-3" onClick={() => window.location.reload()}>Retry session check</button></section>}
-      {profile && <div className="app-columns"><section className="app-card"><h2>Signed in as {profile.username}</h2><p className="app-help">{profile.email}</p><p className="app-description">Your identity is verified by the backend session. Extension credentials belong to this account, not the demo account selector.</p><p className="app-help">Group and task screens are still a separate browser-local demo.</p></section>
+      {!loading && !profile && <section className="app-card"><h2>Sign in to continue</h2><p className="app-description">Sign in to manage your account and connect your extension.</p><Link href="/login" className="button button-blue">Go to Sign In →</Link><button className="button button-white ml-3" onClick={() => window.location.reload()}>Retry session check</button></section>}
+      {profile && <div className="app-columns"><section className="app-card"><h2>Signed in as {profile.username}</h2><p className="app-help">{profile.email}</p><Link className="button button-blue mt-4" href="/work">Open groups & tasks</Link></section>
         <section className="app-card"><p className="eyebrow text-teal-700">CHROME EXTENSION</p><h2 className="mt-3">Connect your focus companion.</h2><p className="app-description">Create a credential, then copy it into your GroupLock Chrome extension. Treat it like a password. It is shown only on this page and is not saved in browser storage.</p>
           <button className="button button-blue" disabled={busy || !!credential} onClick={pair}>{busy ? "Please wait…" : credential ? "Credential created" : "Create extension credential"}</button>
           <p role="status" className="app-success mt-4">{notice}</p>
