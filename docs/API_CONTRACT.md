@@ -93,7 +93,7 @@ the value inside `data`.
 Email confirmation, when enabled, returns through a server callback that verifies
 the Supabase token and only redirects to a fixed same-origin destination.
 Profiles are created from verified Auth identity, with username from signup metadata.
-Group creation atomically creates owner membership and a random 128-bit hex invite
+Group creation atomically creates owner membership and a random 32-character hex invite
 code. Only owners and admins can retrieve it. Joining is idempotent and rate limited.
 
 ## Task and focus rules
