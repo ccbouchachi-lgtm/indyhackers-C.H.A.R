@@ -1,7 +1,6 @@
 # GroupLock API contract
 
-**Status: proposed.** Frontend and extension developers: confirm the endpoint paths,
-response types, and focus rules below before backend feature implementation.
+**Status: approved by frontend and extension.** See [backend setup](BACKEND_SETUP.md) for deployment and database checks.
 
 ## Conventions
 
@@ -149,8 +148,3 @@ with a **30-second** period on Chrome versions that support it. On
 open; clear existing GroupLock rules. Reconcile locally at expiration using
 the server time and agreement expiry in the response. Server state changes take effect on
 the extension's next successful poll. Re-pairing creates a new connection.
-
-## Review checkpoint
-
-- Frontend: confirm envelopes, member/task fields, auth confirmation, and transition errors.
-- Extension: confirm pairing, polling, allowlist semantics, and inactive/error behavior.

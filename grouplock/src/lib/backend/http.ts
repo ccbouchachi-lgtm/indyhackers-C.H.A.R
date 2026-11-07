@@ -1,3 +1,4 @@
+import { connection } from 'next/server';
 import { sessionClient } from './supabase';
 
 export class ApiError extends Error {
@@ -33,6 +34,7 @@ const noStore = { 'Cache-Control': 'private, no-store' };
 
 export function route<C>(handler: (request: Request, context: C) => Promise<unknown>, status = 200) {
   return async (request: Request, context: C) => {
+    await connection();
     try {
       if (request.method !== 'GET' && request.method !== 'HEAD') {
         const expected = new URL(process.env.APP_ORIGIN ?? request.url).origin;
@@ -83,7 +85,7 @@ export function uuid(value: unknown, field: string) {
 
 export function timestamp(value: unknown, field: string) {
   const input = string(value, field, 64);
-  if (!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,9})?Z$/.test(input) || !Number.isFinite(Date.parse(input))) {
+  if (!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,9})?(?:Z|[+-]\d\d:\d\d)$/.test(input) || !Number.isFinite(Date.parse(input))) {
     validation(`Invalid ${field}`);
   }
   return input;

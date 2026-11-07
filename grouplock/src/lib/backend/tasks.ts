@@ -1,3 +1,5 @@
+import { after } from 'next/server';
+import { deliverReviewerEmails } from './email';
 import { body, object, route, signedIn, string, timestamp, unwrap, uuid, validation, version } from './http';
 
 type GroupContext = { params: Promise<{ groupId: string }> };
@@ -61,13 +63,22 @@ export const submit = route(async (request, { params }: TaskContext) => {
   if (parsed.protocol !== 'https:' || !/^https:\/\//i.test(submissionUrl) || parsed.username || parsed.password || /[\s\\]/.test(submissionUrl)) {
     validation('Submission URL must be an HTTPS URL without credentials');
   }
-  return unwrap(await client.rpc('grouplock_tasks', {
-    action: 'submit', resource_id: uuid((await params).taskId, 'taskId'),
+  const taskId = uuid((await params).taskId, 'taskId');
+  const task = unwrap(await client.rpc('grouplock_tasks', {
+    action: 'submit', resource_id: taskId,
     input: {
       submissionUrl: parsed.href,
       expectedSubmissionVersion: version(input.expectedSubmissionVersion, 'expectedSubmissionVersion'),
     },
   }));
+  after(async () => {
+    try {
+      await deliverReviewerEmails(taskId, task.submissionVersion);
+    } catch {
+      console.error('GroupLock reviewer email remains queued');
+    }
+  });
+  return task;
 });
 
 export const review = route(async (request, { params }: TaskContext) => {

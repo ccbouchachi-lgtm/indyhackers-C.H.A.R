@@ -3,7 +3,7 @@ import { sessionClient } from './supabase';
 
 async function profile(client: Awaited<ReturnType<typeof sessionClient>>, id: string) {
   const row = unwrap(await client.from('profiles').select('id,username,email,avatar_url,created_at').eq('id', id).single());
-  if (!row) throw new ApiError(500, "INTERNAL_ERROR", "Profile unavailable");
+  if (!row) throw new ApiError(500, 'INTERNAL_ERROR', 'Profile unavailable');
   return { id: row.id, username: row.username, email: row.email, avatarUrl: row.avatar_url, createdAt: row.created_at };
 }
 

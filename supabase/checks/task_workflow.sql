@@ -20,6 +20,7 @@ declare
   future_task_id uuid;
   agreement_id uuid;
   connection_id uuid;
+  first_email record;
   cutoff timestamptz;
   expiry timestamptz;
   hash_input bytea := decode(repeat('aa', 32), 'hex');
@@ -114,6 +115,19 @@ begin
 
   perform set_config('request.jwt.claim.sub', owner::text, true);
   assert (select count(*) from public.notifications where type = 'task_submitted') = 1, 'Duplicate submission notification';
+  begin
+    perform public.grouplock_claim_reviewer_email('test@example.test');
+    raise exception 'A browser could claim reviewer email jobs';
+  exception when insufficient_privilege then null;
+  end;
+  set local role service_role;
+  select * into strict first_email
+  from public.grouplock_claim_reviewer_email('test@example.test', task_id, 1);
+  assert first_email.recipient_email = 'owner@example.test';
+  assert not exists (select 1 from public.grouplock_claim_reviewer_email('test@example.test', task_id, 1)),
+    'A leased email was claimed twice';
+  perform public.grouplock_mark_reviewer_email_sent(first_email.notification_id, first_email.lease_id);
+  set local role authenticated;
   item := public.grouplock_tasks('review', task_id, '{"decision":"request_changes","submissionVersion":1}');
   cutoff := (item->>'graceUntil')::timestamptz;
   assert cutoff >= (item->>'submittedAt')::timestamptz + interval '15 minutes';
@@ -145,6 +159,9 @@ begin
   end;
 
   reset role;
+  assert (select count(*) from grouplock_private.reviewer_email_outbox) = 2,
+    'Expected one email outbox row per distinct submission';
+  assert (select count(*) from grouplock_private.reviewer_email_outbox where sent_at is not null) = 1;
   assert not (grouplock_private.focus_status(assignee, cutoff)->>'active')::boolean, 'Approval did not release focus';
   set local role authenticated;
   perform set_config('request.jwt.claim.sub', owner::text, true);
