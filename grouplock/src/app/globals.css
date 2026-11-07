@@ -133,3 +133,8 @@ button { cursor: pointer; }
 .lb-medal { color: #bb5b18; }.lb-runner { background: #d25420; box-shadow: -4px 0 10px #ef8e3a45; }
 :is(.grouplock-world,.application) .bg-teal-600 { background: linear-gradient(90deg,#cf511e,#f39b42); }
 .member-teal { background: #f6c796; color: #9b3b1b; }
+
+.auth-page { min-height: 100vh; }
+.auth-grid { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 70px; width: min(1050px,calc(100% - 48px)); margin: 0 auto; padding: 64px 0; }
+.auth-story h1 { margin: 18px 0; max-width: 450px; font-size: clamp(32px,4vw,52px); font-weight: 650; line-height: 1.1; letter-spacing: -.05em; }.auth-story>p:not(.eyebrow) { color: #7d695d; font-size: 15px; line-height: 1.9; }.auth-story .growth-art { margin: 25px 0; max-height: 190px; }.auth-card { padding: 32px; }.auth-card h2 { font-size: 25px; letter-spacing: -.04em; }.auth-notice { background: #fff2df; border: 1px solid #efc9a5; border-radius: 10px; padding: 16px; margin: 22px 0; color: #83441f; font-size: 12px; line-height: 1.8; }.auth-notice p { margin-top: 6px; }
+@media(max-width:750px) { .auth-grid { grid-template-columns: 1fr; gap: 20px; padding: 35px 0; }.auth-story .growth-art { display: none; }.auth-story h1 { font-size: 34px; }.auth-card { padding: 24px; } }

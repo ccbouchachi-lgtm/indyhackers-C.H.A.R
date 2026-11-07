@@ -25,7 +25,17 @@ const id = () => crypto.randomUUID();
 function activity(current: AppData, task: Task, text: string): AppData { return { ...current, activity: [{ id: id(), userId: current.activeUserId, taskId: task.id, text, date: new Date().toISOString() }, ...current.activity] }; }
 function ownedGroup(current: AppData, groupId: string) { const group = current.groups.find((g) => g.id === groupId && g.members.includes(current.activeUserId)); if (!group) throw new Error("Group not found or you are not a member."); return group; }
 export const mockApi = {
-  switchUser(userId: string) { const current = snapshot(); if (current.users.some((user) => user.id === userId)) save({ ...current, activeUserId: userId }); },
+  createDemoProfile(name: string, email: string) {
+    const current = snapshot();
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!name.trim() || name.trim().length > 80) throw new Error("Enter a display name of up to 80 characters.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail) || normalizedEmail.length > 254) throw new Error("Enter a valid demo email address.");
+    if (current.users.some((user) => user.email.toLowerCase() === normalizedEmail)) throw new Error("That demo email already exists in this browser. Choose it on the Sign In page.");
+    const user = { id: id(), name: name.trim(), email: normalizedEmail };
+    save({ ...current, activeUserId: user.id, users: [...current.users, user] });
+    return user.id;
+  },
+  switchUser(userId: string) { const current = snapshot(); if (!current.users.some((user) => user.id === userId)) throw new Error("Choose an existing demo profile."); save({ ...current, activeUserId: userId }); },
   createGroup(name: string, description: string) { const current = snapshot(); if (!name.trim()) throw new Error("Enter a group name."); const group = { id: id(), name: name.trim(), description: description.trim(), code: id().slice(0, 8).toUpperCase(), members: [current.activeUserId] }; save({ ...current, groups: [...current.groups, group] }); return group.id; },
   joinGroup(code: string) { const current = snapshot(); const group = current.groups.find((g) => g.code === code.trim().toUpperCase()); if (!group) throw new Error("That invite code was not found. Try BUILD24 for the demo group."); if (group.members.includes(current.activeUserId)) throw new Error("You are already a member of this group."); save({ ...current, groups: current.groups.map((g) => g.id === group.id ? { ...g, members: [...g.members, current.activeUserId] } : g) }); return group.id; },
   createTask(input: Pick<Task, "title" | "description" | "assignee" | "reviewer" | "deadline" | "groupId">) {
