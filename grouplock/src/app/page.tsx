@@ -1,3 +1,4 @@
+import { EmberArt } from "./components/growth-art";
 import { EntryButton } from "./components/entry-button";
 
 function Lock({ small = false }: { small?: boolean }) {
@@ -32,9 +33,10 @@ export default function Home() {
               <div className="mt-7 flex items-center gap-2 text-xs text-slate-500"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor"><path d="m4 10 4 4 8-8" strokeWidth="2" /></svg> Real deadlines. Shared progress. A little healthy rivalry.</div>
             </div>
             <div className="preview-scene">
-              <div className="race-board p-8 sm:p-12">
+              <div className="race-board growth-preview p-8 sm:p-12">
+                <EmberArt />
                 <div className="mb-7 flex items-center gap-3"><Lock /><span className="eyebrow text-teal-700">YOUR TEAM’S NEXT CHAPTER</span></div>
-                <h2 className="text-3xl font-semibold tracking-tight">A little rivalry.<br />A lot of progress.</h2>
+                <h2 className="text-3xl font-semibold tracking-tight">Fuel the rivalry.<br />Bring the heat.</h2>
                 <p className="mt-5 text-sm leading-7 text-slate-500">Your team’s rankings, progress, and next commitments live in your workspace. Sign in to see where you stand.</p>
                 <div className="my-7 space-y-3" aria-hidden="true">{["w-4/5", "w-3/5", "w-2/5"].map((width) => <div key={width} className="h-3 rounded-full bg-slate-100"><div className={`h-full rounded-full bg-teal-200 ${width}`} /></div>)}</div>
                 <EntryButton mode="signin" className="button button-blue">Sign In to view your leaderboard →</EntryButton>
