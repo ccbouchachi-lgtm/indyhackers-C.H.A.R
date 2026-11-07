@@ -115,9 +115,12 @@ code. Only owners and admins can retrieve it. Joining is idempotent and rate lim
   revocation disables the agreement immediately. All comparisons use server time.
 - Allowlist entries are canonical DNS hostnames (lowercase, no wildcard, scheme,
   path, or port). Each entry allows exactly that host. When several tasks are
-  active, intersect their allowlists. If inactive, return empty arrays and remove
-  GroupLock blocking. If active with an empty list, no sites are allowlisted.
-  Sort domains and active tasks deterministically.
+  active, intersect their allowlists. Sort domains and active tasks deterministically.
+  If inactive, return empty arrays and remove GroupLock blocking. The extension
+  only blocks its locally authorized list of distracting domains, minus the
+  returned allowlist and essential sites (including GroupLock and its auth
+  service). An empty allowlist adds no exemptions. Remote status never adds new
+  domains to the locally authorized list. The extension provides a local override.
 - The client sends the last observed `submissionVersion` as
   `expectedSubmissionVersion`. The server locks the task row, increments the
   version on a new submission, and inserts one reviewer notification in that
@@ -139,9 +142,12 @@ Call `GET /api/focus-status` with `Authorization: Bearer <credential>` over HTTP
 (outside local development). The request has no body or account ID. A supplied
 bearer credential takes precedence over cookies; invalid or revoked credentials
 return 401, never a cookie fallback. The server resolves the user from the
-connection. The extension should poll every **15 seconds** and on startup; on
+connection. The extension should poll on startup and use
+[Chrome alarms](https://developer.chrome.com/docs/extensions/reference/api/alarms)
+with a **30-second** period on Chrome versions that support it. On
 401 clear the credential and remove blocking. On network or server errors fail
-open; do not maintain stale restrictions. Server state changes take effect on
+open; clear existing GroupLock rules. Reconcile locally at expiration using
+the server time and agreement expiry in the response. Server state changes take effect on
 the extension's next successful poll. Re-pairing creates a new connection.
 
 ## Review checkpoint
