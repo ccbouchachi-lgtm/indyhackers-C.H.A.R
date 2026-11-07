@@ -1,12 +1,13 @@
 {
   "manifest_version": 3,
   "name": "GroupLock \u2014 Focus Blocker",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Manually block websites you select. Works with the GroupLock dashboard closed.",
-  "minimum_chrome_version": "102",
+  "minimum_chrome_version": "120",
   "permissions": [
     "storage",
-    "declarativeNetRequest"
+    "declarativeNetRequest",
+    "alarms"
   ],
   "optional_permissions": [
     "notifications"
@@ -67,5 +68,10 @@
     "*://*.x.com/*",
     "*://*.twitter.com/*",
     "*://*.facebook.com/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
   ]
 }

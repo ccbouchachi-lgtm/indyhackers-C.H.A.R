@@ -24,10 +24,12 @@ test('worker blocks, replaces rules, restores state and overrides without backen
   globalThis.chrome = {
     runtime: { id: 'test', getURL: path => `chrome-extension://test/${path}`,
       onMessage: { addListener: fn => { listener = fn; } }, onStartup: { addListener() {} }, onInstalled: { addListener() {} } },
-    storage: { local: { get: async defaults => ({ ...defaults, ...saved }), set: async value => { saved = { ...saved, ...value }; } } },
+    storage: { local: { setAccessLevel: async () => {}, get: async defaults => ({ ...defaults, ...saved }), set: async value => { saved = { ...saved, ...value }; } } },
     permissions: { contains: async () => false },
     declarativeNetRequest: { getDynamicRules: async () => structuredClone(rules),
       updateDynamicRules: async ({ removeRuleIds, addRules }) => { rules = [...rules.filter(rule => !removeRuleIds.includes(rule.id)), ...addRules]; } },
+    alarms: { create: async () => {}, clear: async () => {}, onAlarm: { addListener() {} } },
+    tabs: { query: async () => [] },
     action: { setBadgeText: async () => {}, setBadgeBackgroundColor: async () => {} }
   };
   await import('../background.js');

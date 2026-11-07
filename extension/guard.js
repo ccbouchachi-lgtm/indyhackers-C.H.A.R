@@ -13,7 +13,5 @@
   check();
   window.addEventListener('pageshow', check);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === 'local' && changes.rulesChangedAt) check();
-  });
+  chrome.runtime.onMessage.addListener(message => { if (message.type === 'RECHECK') check(); });
 })();
