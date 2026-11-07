@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>GroupLock</title><link rel="stylesheet" href="popup.css"></head>
+<body><header><div class="mark">G</div><div><h1>GroupLock</h1><p>Make room for focus.</p></div><span class="tag">LOCAL</span></header>
+<main><section class="status"><span id="indicator"></span><div><h2 id="status">Loading…</h2><p id="summary">Checking your restrictions</p></div></section>
+<p class="label">YOUR FOCUS LIST</p><p class="hint">Select the websites you authorize GroupLock to block, including their subdomains.</p>
+<form id="form"><fieldset id="sites" disabled><legend class="sr-only">Websites to block</legend></fieldset><button id="block" type="submit" disabled>Block selected websites</button></form>
+<button id="unblock" class="secondary" disabled>Unblock all · override</button>
+<label class="notification"><input type="checkbox" id="notifications" disabled> Notify me when blocking starts or ends</label>
+<p id="feedback" role="status" aria-live="polite"></p>
+<section class="connection"><strong>Backend connection</strong><p>Not connected — manual mode</p><p>Task status and focus agreements will appear here once backend pairing is available.</p></section>
+<footer>Works while the dashboard is closed.<br>Unblock at any time from this popup.</footer></main><script type="module" src="popup.js"></script></body></html>
